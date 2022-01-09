@@ -22,7 +22,7 @@ class MeetupRsvpChart {
 
         const DEBUG_PRINTOUTS = false;
 
-        this.dataToUse = GMAIL_ADDON_OUTPUT.everything;
+        this.dataToUse = GMAIL_ADDON_OUTPUT.bigDateRange;
 
         this.dataToUse.sort(arraySortComparatorDesc);
         this.preJsonDisplay.innerHTML = JSON.stringify(this.dataToUse, null, 2);
@@ -55,7 +55,7 @@ class MeetupRsvpChart {
             height: this.svg.height - this.margin.top - this.margin.bottom
         };
 
-        this.barHeight = 10;
+        this.barHeight = 40;
 
         initScales.call(this);
         initGroups.call(this);
@@ -183,10 +183,6 @@ class MeetupRsvpChart {
 
 
             const countInThisNest = nestObj.values.length;
-
-            if (countInThisNest < 2) {
-                console.warn("the below for loop won't work, not sure when this case would happen though");
-            }
 
             for (var j = 1; j < countInThisNest; j++) {
                 const currentRsvpObj = nestObj.values[j];
