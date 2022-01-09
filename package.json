@@ -1,0 +1,26 @@
+{
+  "name": "meetup-rsvp-email-parse-client",
+  "version": "1.0.0",
+  "description": "Makes a graph to understand automated RSVP emails from Meetup",
+  "main": "public_html/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pfroud/meetup-rsvp-email-parse-client.git"
+  },
+  "author": "Peter Froud",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/pfroud/meetup-rsvp-email-parse-client/issues"
+  },
+  "homepage": "https://github.com/pfroud/meetup-rsvp-email-parse-client#readme",
+  "devDependencies": {
+    "@types/d3": "^5.7.0",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
+    "eslint": "^8.6.0",
+    "typescript": "^4.5.4"
+  }
+}

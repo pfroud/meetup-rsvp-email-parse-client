@@ -1,0 +1,29 @@
+// https://www.typescriptlang.org/tsconfig
+{
+    "compilerOptions": {
+        "target": "ES2021", // https://www.typescriptlang.org/tsconfig#target
+        "strict": true, // https://www.typescriptlang.org/tsconfig#strict
+        "sourceMap": true, // https://www.typescriptlang.org/tsconfig#sourceMap
+        "noImplicitAny": true, // https://www.typescriptlang.org/tsconfig#noImplicitAny
+        "noImplicitOverride": true, // https://www.typescriptlang.org/tsconfig#noImplicitOverride
+        "noImplicitReturns": true, // https://www.typescriptlang.org/tsconfig#noImplicitReturns
+        "noImplicitThis": true, // https://www.typescriptlang.org/tsconfig#noImplicitThis
+        "noPropertyAccessFromIndexSignature": true, // https://www.typescriptlang.org/tsconfig#noPropertyAccessFromIndexSignature
+        "allowUnreachableCode": false, // https://www.typescriptlang.org/tsconfig#allowUnreachableCode
+        "allowUnusedLabels": false, // https://www.typescriptlang.org/tsconfig#allowUnusedLabels
+        /*
+        The strictNullChecks option gets enabled on when the 'strict'
+        option is enabled, but I am overriding it off because I'm 
+        new to TypeScript and sort of suck at it I think.
+        https://www.typescriptlang.org/tsconfig#strictNullChecks
+
+        If I ever enable the strictNullChecks option, make sure to also
+        enable the exactOptionalPropertyTypes option:
+        https://www.typescriptlang.org/tsconfig#exactOptionalPropertyTypes
+         */
+        "strictNullChecks": false
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
