@@ -1,4 +1,4 @@
-/* global simple, d3, gmailAddOnOutput */
+import { MeetupRsvpChart } from "./MeetupRsvpChart.js";
 
 document.addEventListener("DOMContentLoaded", function () {
 
