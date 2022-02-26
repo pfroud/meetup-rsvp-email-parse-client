@@ -1,0 +1,14 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    // https://code.visualstudio.com/docs/editor/tasks#_custom-tasks
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "rollup",
+            "type": "shell",
+            "group": "build",
+            "command": "rollup --config rollup.config.js"
+        }
+    ]
+}

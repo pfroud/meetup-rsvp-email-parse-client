@@ -1,6 +1,4 @@
-import * as d3 from "./node_modules/d3/dist/d3.js";
-//import * as d3 from "lib/d3_v5.16.0/d3.js";
-// import * as d3 from "d3";
+import * as d3 from "d3";
 import { GMAIL_ADDON_OUTPUT, RsvpRecord } from "./gmailAddOnOutput.js";
 
 interface SvgInterface {
