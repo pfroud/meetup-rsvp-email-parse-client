@@ -30,26 +30,34 @@ interface GroupInterface {
     }
 }
 
+type Colors = {
+    [rsvpState in "Yes" | "No" | "Waitlist"]: string;
+}
+
 export class MeetupRsvpChart {
 
-    private static colors = { Yes: "green", No: "red", Waitlist: "orange" };
+    private static colors: Colors = { Yes: "green", No: "red", Waitlist: "orange" };
 
     private eventDate = new Date("Dec 8 2018 2:00 PM");
     private preJsonDisplay: HTMLPreElement;
     private FONT_SIZE = 14;
     private DEBUG_PRINTOUTS = false;
     private dataToUse: RsvpRecord[];
-    private dataNested: Array<{ key: string; values: any; value: undefined }>;
+    private dataNested: Array<{ key: string; values: RsvpRecord[]; value: undefined }>;
 
     private margin = { top: 20, right: 20, bottom: 20, left: 20 };
 
-    private barHeight = 40;
+    private barHeight = 20;
 
     private svg: SvgInterface;
     private content: ContentInterface;
     private scale: ScaleInterface;
     private axis: AxisInterface;
-    private group: GroupInterface;
+    private group: GroupInterface = {
+        main: null,
+        content: null,
+        axis: { x: null }
+    };
 
     constructor() {
 
@@ -187,102 +195,102 @@ export class MeetupRsvpChart {
     }
 
     private draw() {
-        const count = this.dataNested.length;
+        const peopleCount = this.dataNested.length;
 
-        const barSpacing = (this.content.height - (this.barHeight * count)) / count;
+        const barSpacing = (this.content.height - (this.barHeight * peopleCount)) / peopleCount;
         if (barSpacing < 0) {
             console.warn("svg is not tall enough for this many records and the given bar height");
         }
-        const groupRsvps = this.group.content.append("g").attr("id", "rsvps");
+        const svgGroupOfRsvps = this.group.content.append("g").attr("id", "rsvps");
 
-        const groupNames = this.group.main.append("g").attr("id", "names");
+        const svgGroupOfNames = this.group.main.append("g").attr("id", "names");
 
-        for (let i = 0; i < count; i++) {
-            const nestObj = this.dataNested[i];
-
+        for (let indexOverPeople = 0; indexOverPeople < peopleCount; indexOverPeople++) {
+            const nestObj = this.dataNested[indexOverPeople];
             const name = nestObj.key;
 
-            const yPosition = (this.barHeight + barSpacing) * i;
+            const yPosition = (this.barHeight + barSpacing) * indexOverPeople;
 
-            const groupPerson = groupRsvps
+            const groupPerson = svgGroupOfRsvps
                 .append("g")
                 .attr("id", name)
                 .attr("transform", "translate(0," + yPosition + ")");
 
-            groupNames.append("text")
+            svgGroupOfNames.append("text")
                 .text(name)
                 .attr("text-anchor", "left")
                 //                .attr("x", -50)
                 .attr("y", yPosition + this.barHeight / 2)
                 .attr("alignment-baseline", "middle")
-                .attr("font-size", this.barHeight + "px")
+                .attr("font-size", (this.barHeight - 10) + "px")
                 .classed("name", true);
 
 
 
-            const countInThisNest = nestObj.values.length;
-
-            for (let j = 1; j < countInThisNest; j++) {
-                const currentRsvpObj = nestObj.values[j];
-                const previousRsvpObj = nestObj.values[j - 1];
+            for (let indexOverRsvpRecords = 1; indexOverRsvpRecords < nestObj.values.length; indexOverRsvpRecords++) {
+                const presentRsvpObj = nestObj.values[indexOverRsvpRecords];
+                const previousRsvpObj = nestObj.values[indexOverRsvpRecords - 1];
                 if (!previousRsvpObj) {
                     console.warn("looks like this for loop when out of bounds");
                 }
 
                 if (this.DEBUG_PRINTOUTS) {
                     console.group("drawing rect for " + previousRsvpObj.rsvp);
-                    console.log("current=" + currentRsvpObj.rsvp + ", previous=" + previousRsvpObj.rsvp);
+                    console.log("current=" + presentRsvpObj.rsvp + ", previous=" + previousRsvpObj.rsvp);
                 }
 
-                let startDate;
-                if (previousRsvpObj.isUpdate && nestObj.values[j - 2].rsvp.toLowerCase() === "waitlist") {
-                    startDate = new Date(previousRsvpObj.gmailMessageDate);
+                let rectangleStartDate: Date;
+                if (previousRsvpObj.isUpdate && nestObj.values[indexOverRsvpRecords - 2].rsvp.toLowerCase() === "waitlist") {
+                    rectangleStartDate = new Date(previousRsvpObj.gmailMessageDate);
                 } else {
-                    startDate = new Date(previousRsvpObj.rsvpDate);
+                    rectangleStartDate = new Date(previousRsvpObj.rsvpDate);
                 }
                 if (this.DEBUG_PRINTOUTS) {
-                    console.log("start date: " + startDate);
+                    console.log("start date: " + rectangleStartDate);
                 }
-                const xStart = this.scale.x(startDate);
+                const rectangleXStart = this.scale.x(rectangleStartDate);
 
-                let xEnd;
-                if (previousRsvpObj.rsvp.toLowerCase() === "waitlist" && currentRsvpObj.isUpdate) {
+                let rectangleXEnd: number;
+                if (previousRsvpObj.rsvp.toLowerCase() === "waitlist" && presentRsvpObj.isUpdate) {
                     // THIS IS WRONG because the gmail message date doesn't matter.
                     // actually need to use date from other rsvps in that email!!!
-                    const endDate = currentRsvpObj.gmailMessageDate;
+                    const endDate = presentRsvpObj.gmailMessageDate;
                     if (this.DEBUG_PRINTOUTS) {
                         console.log("end date from gmail message: " + endDate);
                     }
-                    xEnd = this.scale.x(new Date(endDate));
+                    rectangleXEnd = this.scale.x(new Date(endDate));
                 } else {
-                    const endDate = currentRsvpObj.rsvpDate;
+                    const endDate = presentRsvpObj.rsvpDate;
                     if (this.DEBUG_PRINTOUTS) {
                         console.log("end date: " + endDate);
                     }
-                    xEnd = this.scale.x(new Date(endDate));
+                    rectangleXEnd = this.scale.x(new Date(endDate));
                 }
 
 
-                const width = xEnd - xStart;
+                const rectangleWidth = rectangleXEnd - rectangleXStart;
                 if (this.DEBUG_PRINTOUTS) {
-                    console.log("width: " + width);
+                    console.log("width: " + rectangleWidth);
                 }
+
 
                 groupPerson.append("rect")
-                    .attr("x", xStart)
+                    .attr("x", rectangleXStart)
                     .attr("y", 0)
-                    .attr("width", width)
+                    .attr("width", rectangleWidth)
                     .attr("height", this.barHeight)
                     //                    .attr("opacity", 0.6)
-                    //.attr("fill", MeetupRsvpChart.colors[previousRsvpObj.rsvp])
+                    .attr("fill", MeetupRsvpChart.colors[previousRsvpObj.rsvp])
                     ;
 
-                console.groupEnd();
+                if (this.DEBUG_PRINTOUTS) {
+                    console.groupEnd();
+                }
 
             }
 
-            //now need to draw rect for last row, which ends at the event start
-            const lastRsvpObj = nestObj.values[countInThisNest - 1];
+            //now need to draw rect for last record, which ends at the event start
+            const lastRsvpObj = nestObj.values[nestObj.values.length - 1];
             const startDate = new Date(lastRsvpObj.rsvpDate);
             const xStart = this.scale.x(startDate);
             const xEnd = this.scale.x(this.eventDate);
@@ -294,7 +302,7 @@ export class MeetupRsvpChart {
                 .attr("width", width)
                 .attr("height", this.barHeight)
                 //                .attr("opacity", 0.6)
-                //.attr("fill", MeetupRsvpChart.colors[lastRsvpObj.rsvp])
+                .attr("fill", MeetupRsvpChart.colors[lastRsvpObj.rsvp])
                 ;
 
 
